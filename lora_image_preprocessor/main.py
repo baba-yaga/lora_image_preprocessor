@@ -77,7 +77,8 @@ def process_images(input_dir, output_dir, face_only, remove_bg, resolution=512, 
                 continue
         else:
             print("- Processing whole image...")
-            processed_img, prompt = process_whole_image(img, base_name, output_dir, resolution)
+            _, _, blendshapes = process_face_image(img, resolution, padding_factor=face_crop_padding)
+            processed_img = process_whole_image(img, base_name, output_dir, resolution)
             final_img = processed_img
             out_path = output_dir / f"{base_name}_{resolution}.{output_format}"
             txt_path = output_dir / f"{base_name}_{resolution}.txt"
@@ -92,7 +93,14 @@ def process_images(input_dir, output_dir, face_only, remove_bg, resolution=512, 
 
         if txt_path:
             print("- Creating image description...", end="", flush=True)
-            prompt = generate_caption(final_img, blendshapes)
+            prompt = generate_caption(final_img)
+            if blendshapes:
+                emotion_prompt = "\n\nThe ARKit expression blendshape scores:\n"
+                for emotion, score in blendshapes.items():
+                    if score > 0.15:
+                        emotion_prompt += f" {emotion} ({score:.2f}),"
+                if emotion_prompt.endswith(","):
+                    prompt += emotion_prompt[:-1] + "." # remove last comma
             txt_path.write_text(prompt, encoding="utf-8")
             print("Done.")
 

@@ -22,21 +22,12 @@ def load_caption_model():
         model.eval()
         print("Captioning model loaded.")
 
-def generate_caption(pil_image, blendshapes=None):
+def generate_caption(pil_image):
     global processor, model
     if processor is None or model is None:
         load_caption_model()
 
-    prompt = "USER: <image>\nDescribe this image in terms of appearance, emotions, ethnicity, hair and clothing of the character"
-    
-    if blendshapes:
-        emotion_prompt = " The person's expression is a mix of"
-        for emotion, score in blendshapes.items():
-            if score > 0.3: # Threshold to only include significant emotions
-                emotion_prompt += f" {emotion} ({score:.2f}),"
-        prompt += emotion_prompt[:-1] + "." # remove last comma
-
-    prompt += "\nASSISTANT:"
+    prompt = "USER: <image>\nDescribe this image in terms of appearance, emotions, ethnicity, hair and clothing of the character\nASSISTANT:"
     
     inputs = processor(text=prompt, images=pil_image, return_tensors="pt").to("cuda:0")
 

@@ -19,5 +19,4 @@ def process_whole_image(img, base_name, output_dir, resolution=512):
     padded = make_square(img, bg_color=(0, 0, 0))
     resized = padded.resize((resolution, resolution), Image.LANCZOS)
     resized = upscale_image(resized, upscale_if_large=True)
-    caption = generate_caption(resized)
-    return resized, caption
+    return resized

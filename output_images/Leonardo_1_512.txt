@@ -1,1 +1,4 @@
 The image features a beautiful young woman with blonde hair, standing in front of a large screen. She is wearing a blue shirt and jeans, giving her a casual and professional appearance. The woman appears to be smiling, conveying a sense of happiness and confidence. The scene suggests that she might be working in a technology or finance-related field, given the presence of the large screen and the fact that she is posing for a picture.
+
+The ARKit expression blendshape scores:
+ eyeBlinkLeft (0.15), eyeLookInRight (0.62), eyeLookOutLeft (0.65), eyeSquintLeft (0.45), eyeSquintRight (0.54), mouthSmileLeft (0.95), mouthSmileRight (0.95), mouthStretchLeft (0.18), mouthUpperUpLeft (0.79), mouthUpperUpRight (0.77).

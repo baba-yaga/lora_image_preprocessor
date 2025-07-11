@@ -27,7 +27,7 @@ def generate_caption(pil_image):
     if processor is None or model is None:
         load_caption_model()
 
-    prompt = "USER: <image>\nDescribe this image in terms of appearance, emotions, ethnicity, hair and clothing of the character\nASSISTANT:"
+    prompt = "USER: <image>\nDescribe this image in terms of appearance, emotions, age, ethnicity, hair and clothing of the character. Do not describe the background.\nASSISTANT:"
     
     inputs = processor(text=prompt, images=pil_image, return_tensors="pt").to("cuda:0")
 

@@ -1,4 +1,0 @@
-The image features a young woman with long, curly hair, wearing a black dress. She is smiling and appears to be enjoying herself. The woman's emotions are positive and cheerful, as she is happily posing for the camera. Her ethnicity is not discernible from the image, but her hair is curly, which is a distinctive feature. The woman is wearing a black dress, which adds a touch of elegance to her appearance.
-
-The ARKit expression blendshape scores:
- browOuterUpLeft (0.37), browOuterUpRight (0.15), eyeLookDownLeft (0.50), eyeLookDownRight (0.48), eyeSquintRight (0.17), mouthLowerDownLeft (0.53), mouthLowerDownRight (0.58), mouthPressRight (0.17), mouthSmileLeft (0.20), mouthSmileRight (0.24), mouthStretchRight (0.34), mouthUpperUpLeft (0.69), mouthUpperUpRight (0.81).

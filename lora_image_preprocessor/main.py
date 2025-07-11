@@ -25,13 +25,12 @@ def preload_models(face_only: bool, remove_bg: bool, general_processing: bool):
         load_caption_model()
 
     if remove_bg:
-        from lora_image_preprocessor.background_remover import load_background_remover_model
-        load_background_remover_model()
+        from lora_image_preprocessor.background_remover import remove_background
 
     print("Model pre-loading complete.")
 
 
-def process_images(input_dir, output_dir, face_only, remove_bg, resolution=512, output_format="png", face_crop_padding=1.5):
+def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, resolution=512, output_format="png", face_crop_padding=1.5):
     from lora_image_preprocessor.face_cropper import process_face_image
     from lora_image_preprocessor.general_cropper import process_whole_image
     from lora_image_preprocessor.background_remover import remove_background
@@ -83,26 +82,27 @@ def process_images(input_dir, output_dir, face_only, remove_bg, resolution=512, 
             out_path = output_dir / f"{base_name}_{resolution}.{output_format}"
             txt_path = output_dir / f"{base_name}_{resolution}.txt"
 
-        if final_img and remove_bg:
-            print("- Removing background...", end="", flush=True)
-            final_img = remove_background(final_img)
-            print("Done.")
-
-        if final_img and out_path:
-            save_image(final_img, out_path)
-
-        if txt_path:
+        if txt_path and not no_caption:
             print("- Creating image description...", end="", flush=True)
             prompt = generate_caption(final_img)
             if blendshapes:
-                emotion_prompt = "\n\nThe ARKit expression blendshape scores:\n"
+                emotion_prompt = "\n\nThe ARKit expression blendshape scores:"
                 for emotion, score in blendshapes.items():
                     if score > 0.15:
-                        emotion_prompt += f" {emotion} ({score:.2f}),"
+                        emotion_prompt += f"\n{emotion} ({score:.2f}),"
                 if emotion_prompt.endswith(","):
                     prompt += emotion_prompt[:-1] + "." # remove last comma
             txt_path.write_text(prompt, encoding="utf-8")
             print("Done.")
+
+        if final_img and remove_bg:
+            print("- Removing background...", end="", flush=True)
+            final_img = remove_background(final_img)
+            out_path = out_path.with_name(f"{out_path.stem}_no_bg{out_path.suffix}")
+            print("Done.")
+
+        if final_img and out_path:
+            save_image(final_img, out_path)
 
     print("\nProcessing complete!")
     print(f"Processed {len(image_files)} images.")
@@ -118,6 +118,7 @@ if __name__ == "__main__":
     parser.add_argument("--resolution", type=int, default=512, help="Target output resolution (default: 512)")
     parser.add_argument("--output_format", type=str, default="png", help="Output image format (e.g., png, jpg)")
     parser.add_argument("--face_crop_padding", type=float, default=1.8, help="Padding factor for face cropping.")
+    parser.add_argument("--no_caption", action="store_true", help="Do not generate captions.")
     args = parser.parse_args()
 
-    process_images(args.input_dir, args.output_dir, args.face_only, args.remove_bg, args.resolution, args.output_format, args.face_crop_padding)
+    process_images(args.input_dir, args.output_dir, args.face_only, args.remove_bg, args.no_caption, args.resolution, args.output_format, args.face_crop_padding)

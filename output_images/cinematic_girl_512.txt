@@ -1,0 +1,13 @@
+The image features a young woman with long, blonde hair, wearing a ponytail. She is wearing a gray shirt and has a ponytail holder in her hair. The woman appears to be looking off into the distance, possibly contemplating or daydreaming. Her age, ethnicity, and clothing suggest that she is a teenager or young adult.
+
+The ARKit expression blendshape scores:
+browInnerUp (0.95),
+browOuterUpLeft (0.85),
+browOuterUpRight (0.59),
+eyeLookDownRight (0.17),
+eyeLookInRight (0.76),
+eyeLookOutLeft (0.76),
+eyeSquintLeft (0.16),
+eyeSquintRight (0.48),
+mouthPucker (0.22),
+mouthStretchRight (0.18).

@@ -1,4 +1,0 @@
-The image features a woman with long, curly hair, wearing a black shirt. She appears to be in a state of distress or discomfort, possibly due to an emotional event or a physical sensation. The woman's facial expression and body language convey a sense of unease or discomfort. The scene takes place in a room with a bed and a teddy bear, which adds to the overall atmosphere of the image.
-
-The ARKit expression blendshape scores:
- browOuterUpLeft (0.21), eyeLookDownLeft (0.15), eyeLookDownRight (0.17), eyeLookOutRight (0.22), eyeSquintLeft (0.16), mouthLowerDownLeft (0.33), mouthLowerDownRight (0.24), mouthShrugUpper (0.15), mouthUpperUpLeft (0.23), mouthUpperUpRight (0.32).

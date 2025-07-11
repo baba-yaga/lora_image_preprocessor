@@ -1,0 +1,18 @@
+# === Core image & numerical packages ===
+numpy==1.26.4
+Pillow
+tqdm
+opencv-python
+
+# === Face detection ===
+mediapipe
+
+# === Background removal (optional) ===
+rembg[gpu]
+
+# === Caption generation (LLaVA model) ===
+torch==2.1.0
+torchvision==0.16.0
+transformers>=4.36.0
+bitsandbytes>=0.41.3
+accelerate>=0.25.0

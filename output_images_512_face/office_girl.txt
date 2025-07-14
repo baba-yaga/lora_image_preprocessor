@@ -1,0 +1,13 @@
+The image features a beautiful young woman with long, blonde hair. She is wearing a blue shirt and smiling brightly, possibly for the camera. The woman appears to be in her late teens or early twenties, and her ethnicity is Caucasian. The overall appearance of the woman is that of a confident and happy individual.
+
+The ARKit expression blendshape scores:
+eyeBlinkLeft (0.15),
+eyeLookInRight (0.62),
+eyeLookOutLeft (0.65),
+eyeSquintLeft (0.45),
+eyeSquintRight (0.54),
+mouthSmileLeft (0.95),
+mouthSmileRight (0.95),
+mouthStretchLeft (0.18),
+mouthUpperUpLeft (0.79),
+mouthUpperUpRight (0.77).

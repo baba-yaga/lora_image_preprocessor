@@ -1,0 +1,15 @@
+The man in the image is wearing a leather vest and has a beard. He appears to be a warrior or a character from a fantasy world. The man is looking directly at the camera, possibly for a portrait or a promotional photo. The image captures the man's intense expression and his overall appearance, which suggests that he is a strong and determined individual.
+
+The ARKit expression blendshape scores:
+browDownLeft (0.28),
+browDownRight (0.26),
+eyeLookInLeft (0.35),
+eyeLookOutRight (0.35),
+eyeLookUpLeft (0.49),
+eyeLookUpRight (0.50),
+eyeSquintLeft (0.74),
+eyeSquintRight (0.79),
+mouthPressLeft (0.31),
+mouthPressRight (0.16),
+mouthRollLower (0.22),
+mouthRollUpper (0.26).

@@ -30,15 +30,23 @@ def preload_models(face_only: bool, remove_bg: bool, general_processing: bool):
     print("Model pre-loading complete.")
 
 
-def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, resolution=512, output_format="png", face_crop_padding=1.5):
+def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, resolution=512, output_format="png", face_crop_padding=1.8):
     from lora_image_preprocessor.face_cropper import process_face_image
     from lora_image_preprocessor.general_cropper import process_whole_image
     from lora_image_preprocessor.background_remover import remove_background
     from lora_image_preprocessor.captioner import generate_caption
     
+    # Save processed files to directory with the resolution value, face or background indication appended
     input_dir = Path(input_dir)
-    output_dir = Path(output_dir)
+    output_dir = Path(f"{output_dir}_{resolution}")
+
+    if face_only:
+        output_dir = Path(f"{output_dir}_face")
+    if remove_bg:
+        output_dir = Path(f"{output_dir}_no_bg")
+
     ensure_dir(output_dir)
+
 
     allowed_extensions = [".jpg", ".jpeg", ".png", ".webp"]
     image_files = [f for f in input_dir.iterdir() if f.suffix.lower() in allowed_extensions]
@@ -54,33 +62,30 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
         print(f"\nWorking on {img_path.name}:")
         img = load_image(img_path)
         base_name = img_path.stem
+        out_path = output_dir / f"{base_name}.{output_format}"
+        txt_path = output_dir / f"{base_name}.txt"
+
 
         final_img = None
         prompt = None
         blendshapes = None
-        out_path = None
-        txt_path = None
 
         if face_only:
             print("- Detecting faces...", end="", flush=True)
             processed_img, face_detected, blendshapes = process_face_image(img, resolution, padding_factor=face_crop_padding)
             if face_detected:
                 print("Done.")
-                print("  - Detected one face, cropping.")
+                print("  - A face detected, cropping.")
                 final_img = processed_img
-                out_path = output_dir / f"{base_name}_face_{resolution}.{output_format}"
-                txt_path = output_dir / f"{base_name}_face_{resolution}.txt"
             else:
                 print("Done.")
-                print("  - No faces detected. Skipping.")
+                print("  - No faces detected. Skipping.") 
                 continue
         else:
             print("- Processing whole image...")
             _, _, blendshapes = process_face_image(img, resolution, padding_factor=face_crop_padding)
             processed_img = process_whole_image(img, base_name, output_dir, resolution)
             final_img = processed_img
-            out_path = output_dir / f"{base_name}_{resolution}.{output_format}"
-            txt_path = output_dir / f"{base_name}_{resolution}.txt"
 
         if txt_path and not no_caption:
             print("- Creating image description...", end="", flush=True)
@@ -98,7 +103,6 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
         if final_img and remove_bg:
             print("- Removing background...", end="", flush=True)
             final_img = remove_background(final_img)
-            out_path = out_path.with_name(f"{out_path.stem}_no_bg{out_path.suffix}")
             print("Done.")
 
         if final_img and out_path:

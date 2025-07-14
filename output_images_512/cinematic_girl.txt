@@ -1,0 +1,13 @@
+The woman in the image has long, brown hair that is styled in a ponytail. She is wearing a grey shirt and appears to be looking off into the distance. Her facial expression suggests a thoughtful or contemplative mood. The woman appears to be a young adult, possibly in her late teens or early twenties. Her skin tone is a natural, unblemished color, and her features are typical of her ethnicity.
+
+The ARKit expression blendshape scores:
+browInnerUp (0.95),
+browOuterUpLeft (0.85),
+browOuterUpRight (0.59),
+eyeLookDownRight (0.17),
+eyeLookInRight (0.76),
+eyeLookOutLeft (0.76),
+eyeSquintLeft (0.16),
+eyeSquintRight (0.48),
+mouthPucker (0.22),
+mouthStretchRight (0.18).

@@ -24,7 +24,7 @@ The main script is `lora_image_preprocessor/main.py`. You can run it from the pr
 ### CLI Options
 
 *   `--input_dir`: (Required) The directory containing the images to process.
-*   `--output_dir`: (Required) The directory where the processed images and captions will be saved.
+*   `--output_dir`: (Required) The directory base name where the processed images and captions will be saved. The actual name will be appended with the resoltion of the outputs and other flags: face and/or no_bg, if given.
 *   `--face_only`: If specified, the script will crop the image to the detected face. Note that in images where both eyes are not visible, or in cartoon-like images, the face is usually not detected.
 *   `--remove_bg`: If specified, the background of the images will be removed.
 *   `--resolution`: The target output resolution for the images (default: 512).

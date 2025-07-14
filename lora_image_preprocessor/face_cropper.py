@@ -4,7 +4,6 @@ import numpy as np
 import mediapipe as mp
 from PIL import Image
 from lora_image_preprocessor.general_cropper import make_square
-from lora_image_preprocessor.upscaler import upscale_image
 
 # Import the new API components
 from mediapipe.tasks import python
@@ -82,8 +81,6 @@ def process_face_image(pil_img, resolution=512, padding_factor=1.5):
         print("[WARN] No face detected in image. Using fallback square crop.")
         cropped = make_square(pil_img)
 
-    # Upscale if the cropped face is much smaller than the target resolution
-    cropped = upscale_image(cropped, resolution=resolution)
 
     resized = cropped.resize((resolution, resolution), Image.LANCZOS)
     return resized, face_detected, blendshapes

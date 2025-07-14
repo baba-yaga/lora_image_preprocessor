@@ -1,0 +1,13 @@
+The woman in the image is wearing a blue shirt and has long, blonde hair. She is smiling and appears to be in a positive mood. Her age is difficult to determine, but she appears to be a young adult. Her ethnicity is Caucasian, and her skin color is fair. She has a slender figure and is standing in front of a large screen, which could be a television or a computer monitor. The woman's overall demeanor suggests that she is confident and comfortable in her surroundings.
+
+The ARKit expression blendshape scores:
+eyeBlinkLeft (0.15),
+eyeLookInRight (0.62),
+eyeLookOutLeft (0.65),
+eyeSquintLeft (0.45),
+eyeSquintRight (0.54),
+mouthSmileLeft (0.95),
+mouthSmileRight (0.95),
+mouthStretchLeft (0.18),
+mouthUpperUpLeft (0.79),
+mouthUpperUpRight (0.77).

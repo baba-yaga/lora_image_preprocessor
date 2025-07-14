@@ -12,7 +12,7 @@ A Python tool to preprocess images for LoRA training, with optional face croppin
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/lora-image-preprocessor.git
+git clone https://github.com/baba-yaga/lora-image-preprocessor.git
 cd lora-image-preprocessor
 pip install -r requirements.txt
 ```

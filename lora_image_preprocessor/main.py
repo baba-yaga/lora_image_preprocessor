@@ -9,7 +9,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 from lora_image_preprocessor.utils import load_image, save_image, ensure_dir
 
-def preload_models(face_only: bool, remove_bg: bool, general_processing: bool):
+def preload_models(face_only: bool, remove_bg: bool, general_processing: bool, no_caption: bool):
     print("Pre-loading models...")
     if face_only:
         print("- Loading face detection model...")
@@ -20,7 +20,7 @@ def preload_models(face_only: bool, remove_bg: bool, general_processing: bool):
         process_face_image(dummy_img)
         print("  - Face detection model loaded.")
 
-    if general_processing:
+    if general_processing and not no_caption:
         from lora_image_preprocessor.captioner import load_caption_model
         load_caption_model()
 
@@ -33,6 +33,11 @@ def preload_models(face_only: bool, remove_bg: bool, general_processing: bool):
 def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, resolution=512, output_format="png", face_crop_padding=1.8):
     from lora_image_preprocessor.face_cropper import process_face_image
     from lora_image_preprocessor.general_cropper import process_whole_image
+    
+    if output_dir is None:
+        output_dir = Path(input_dir)
+    
+    
     from lora_image_preprocessor.background_remover import remove_background
     from lora_image_preprocessor.captioner import generate_caption
     
@@ -56,7 +61,7 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
         return
 
     general_processing = not face_only
-    preload_models(face_only, remove_bg, general_processing)
+    preload_models(face_only, remove_bg, general_processing, no_caption)
 
     for img_path in tqdm(image_files, desc="Processing images"):
         print(f"\nWorking on {img_path.name}:")
@@ -116,7 +121,7 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_dir", required=True)
-    parser.add_argument("--output_dir", required=True)
+    parser.add_argument("--output_dir", required=False)
     parser.add_argument("--face_only", action="store_true")
     parser.add_argument("--remove_bg", action="store_true")
     parser.add_argument("--resolution", type=int, default=512, help="Target output resolution (default: 512)")

@@ -1,90 +1,44 @@
 import cv2
-import mediapipe as mp
 import numpy as np
-import os
+from PIL import Image
+from rembg import remove
+from rembg.bg import new_session
 
-# Input and output folders
-INPUT_DIR = 'input_images'
-OUTPUT_DIR = 'input_images_512_bg_blured'
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# Create a session that forces CPU usage to avoid CUDA errors
+cpu_session = new_session(providers=['CPUExecutionProvider'])
 
-mp_face_detection = mp.solutions.face_detection
-mp_selfie_segmentation = mp.solutions.selfie_segmentation
+def blur_background(pil_img: Image.Image) -> Image.Image:
+    """Blurs the background of an image using a Gaussian blur, keeping the foreground sharp.
 
-# For each image in the input folder
-for fname in os.listdir(INPUT_DIR):
-    if not fname.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-        continue
+    Args:
+        pil_img: The input image (PIL.Image).
 
-    path = os.path.join(INPUT_DIR, fname)
-    image = cv2.imread(path)
-    if image is None:
-        print(f"Cannot open {fname}")
-        continue
+    Returns:
+        The image with a blurred background (PIL.Image).
+    """
+    # Get the foreground mask from the image using the CPU-only session
+    mask_pil = remove(pil_img, only_mask=True, session=cpu_session)
 
-    # Face detection
-    with mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detector:
-        results = face_detector.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        if not results.detections:
-            print(f"No face found in {fname}")
-            continue
+    # Convert PIL image to OpenCV format (NumPy array) and from RGB to BGR
+    ocv_img = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
 
-        # Use the first detected face
-        det = results.detections[0]
-        bbox = det.location_data.relative_bounding_box
-        h, w, _ = image.shape
-        # Original bounding box (as float)
-        bx = bbox.xmin * w
-        by = bbox.ymin * h
-        bw = bbox.width * w
-        bh = bbox.height * h
+    # Apply Gaussian blur to the entire image
+    sigma = np.random.uniform(3, 15)
+    blurred_ocv_img = cv2.GaussianBlur(ocv_img, (0, 0), sigma)
 
-        # Center of the box
-        cx = bx + bw / 2
-        cy = by + bh / 2
+    # Convert the single-channel mask to a 3-channel version
+    mask_ocv = cv2.cvtColor(np.array(mask_pil), cv2.COLOR_GRAY2BGR)
+    
+    # Normalize mask values to the 0.0-1.0 range
+    mask_float = mask_ocv.astype(np.float32) / 255.0
 
-        # New size with 1.5x padding (box size × 1.5)
-        scale = 1.5
-        new_bw = bw * scale
-        new_bh = bh * scale
+    # Combine the original foreground with the blurred background.
+    # Where the mask is white (1.0), we use the original image pixel.
+    # Where the mask is black (0.0), we use the blurred image pixel.
+    combined_ocv = ocv_img * mask_float + blurred_ocv_img * (1 - mask_float)
+    combined_ocv = combined_ocv.astype(np.uint8)
 
-        # New top-left and bottom-right, ensuring we stay within image bounds
-        x_min = int(max(cx - new_bw / 2, 0))
-        x_max = int(min(cx + new_bw / 2, w))
-        y_min = int(max(cy - new_bh / 2, 0))
-        y_max = int(min(cy + new_bh / 2, h))
-
-        crop = image[y_min:y_max, x_min:x_max]
-
-    # Person segmentation (to create a foreground mask)
-    with mp_selfie_segmentation.SelfieSegmentation(model_selection=1) as segmenter:
-        rgb_crop = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
-        result = segmenter.process(rgb_crop)
-        mask = result.segmentation_mask
-        # Clean binary mask for the person
-        mask = (mask > 0.1).astype(np.uint8)
-
-        # Blur background with a random kernel size
-        sigma = np.random.uniform(5, 25)
-        blurred = cv2.GaussianBlur(crop, (0, 0), sigma)
-        mask_3ch = np.repeat(mask[:, :, np.newaxis], 3, axis=2)
-        combined = crop * mask_3ch + blurred * (1 - mask_3ch)
-        combined = combined.astype(np.uint8)
-
-    # Resize to 512x512 (padding if necessary)
-    target_size = 512
-    h_c, w_c = combined.shape[:2]
-    scale = target_size / max(h_c, w_c)
-    resized = cv2.resize(combined, (int(w_c * scale), int(h_c * scale)))
-    top = (target_size - resized.shape[0]) // 2
-    bottom = target_size - resized.shape[0] - top
-    left = (target_size - resized.shape[1]) // 2
-    right = target_size - resized.shape[1] - left
-    final_img = cv2.copyMakeBorder(resized, top, bottom, left, right, cv2.BORDER_CONSTANT, value=(127,127,127))
-
-    # Save result
-    out_path = os.path.join(OUTPUT_DIR, fname)
-    cv2.imwrite(out_path, final_img)
-    print(f"Processed {fname} → {out_path}")
-
-print("All images processed.")
+    # Convert the final image back to PIL format from BGR to RGB
+    blurred_pil_img = Image.fromarray(cv2.cvtColor(combined_ocv, cv2.COLOR_BGR2RGB))
+    
+    return blurred_pil_img

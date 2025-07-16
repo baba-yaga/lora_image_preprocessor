@@ -2,6 +2,7 @@
 import os
 import argparse
 import warnings
+from lora_image_preprocessor.blur_bg import blur_background
 from pathlib import Path
 from tqdm import tqdm
 
@@ -43,13 +44,16 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
     
     # Save processed files to directory with the resolution value, face or background indication appended
     input_dir = Path(input_dir)
-    output_dir = Path(f"{output_dir}_{resolution}")
+    output_dir_parts = [str(output_dir), str(resolution)]
 
     if face_only:
-        output_dir = Path(f"{output_dir}_face")
+        output_dir_parts.append("face")
     if remove_bg:
-        output_dir = Path(f"{output_dir}_no_bg")
+        output_dir_parts.append("no_bg")
+    if args.blur_bg:
+        output_dir_parts.append("blurred_bg")
 
+    output_dir = Path("_".join(output_dir_parts))
     ensure_dir(output_dir)
 
 
@@ -110,6 +114,14 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
             final_img = remove_background(final_img)
             print("Done.")
 
+        if args.blur_bg and final_img is not None:
+            print("- Blurring background...", end="", flush=True)
+            final_img = blur_background(final_img)
+            print("Done.")
+
+        base_name = img_path.stem
+        out_path = output_dir / f"{base_name}.{output_format}"
+
         if final_img and out_path:
             save_image(final_img, out_path)
 
@@ -124,6 +136,7 @@ if __name__ == "__main__":
     parser.add_argument("--output_dir", required=False)
     parser.add_argument("--face_only", action="store_true")
     parser.add_argument("--remove_bg", action="store_true")
+    parser.add_argument("--blur_bg", action="store_true", help="Apply background blur.")
     parser.add_argument("--resolution", type=int, default=512, help="Target output resolution (default: 512)")
     parser.add_argument("--output_format", type=str, default="png", help="Output image format (e.g., png, jpg)")
     parser.add_argument("--face_crop_padding", type=float, default=1.8, help="Padding factor for face cropping.")

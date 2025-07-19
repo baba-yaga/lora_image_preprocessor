@@ -22,8 +22,9 @@ def preload_models(face_only: bool, remove_bg: bool, general_processing: bool, n
         print("  - Face detection model loaded.")
 
     if general_processing and not no_caption:
-        from lora_image_preprocessor.captioner import load_caption_model
-        load_caption_model()
+        from lora_image_preprocessor.captioner import load_blip_model, load_llava_model
+        load_blip_model()
+        load_llava_model()
 
     if remove_bg:
         from lora_image_preprocessor.background_remover import remove_background
@@ -40,7 +41,7 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
     
     
     from lora_image_preprocessor.background_remover import remove_background
-    from lora_image_preprocessor.captioner import generate_caption
+    from lora_image_preprocessor.captioner import generate_captions
     
     # Save processed files to directory with the resolution value, face or background indication appended
     input_dir = Path(input_dir)
@@ -97,8 +98,8 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
             final_img = processed_img
 
         if txt_path and not no_caption:
-            print("- Creating image description...", end="", flush=True)
-            prompt = generate_caption(final_img)
+            print("- Creating image captions...")
+            prompt = generate_captions(final_img)
             if blendshapes:
                 emotion_prompt = "\n\nThe ARKit expression blendshape scores:"
                 for emotion, score in blendshapes.items():
@@ -107,7 +108,7 @@ def process_images(input_dir, output_dir, face_only, remove_bg, no_caption, reso
                 if emotion_prompt.endswith(","):
                     prompt += emotion_prompt[:-1] + "." # remove last comma
             txt_path.write_text(prompt, encoding="utf-8")
-            print("Done.")
+            print("Captions and blendshapes saved.")
 
         if final_img and remove_bg:
             print("- Removing background...", end="", flush=True)

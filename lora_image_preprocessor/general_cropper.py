@@ -2,7 +2,6 @@
 #%%
 from PIL import Image, ImageOps
 from lora_image_preprocessor.utils import resize_with_aspect_ratio
-from lora_image_preprocessor.captioner import generate_caption
 
 #%%
 def make_square(img, bg_color=(0, 0, 0)):
